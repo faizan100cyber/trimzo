@@ -8,6 +8,6 @@ public class TrimzoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TrimzoApplication.class, args);
-	}
+	}{}
 
 }
