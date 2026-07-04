@@ -4,21 +4,21 @@
 **Goal:** Register + Login + JWT working
 
 ## Files Created
-| File | Purpose |
-|---|---|
-| User.java | Database entity |
-| RegisterRequest.java | Register input |
-| LoginRequest.java | Login input |
-| AuthResponse.java | Login output |
-| UserRepository.java | DB operations |
-| JwtUtil.java | Token banana/validate |
+| File | Purpose                |
+|---|------------------------|
+| User.java | Database entity        |
+| RegisterRequest.java | Register input         |
+| LoginRequest.java | Login input            |
+| AuthResponse.java | Login output           |
+| UserRepository.java | DB operations          |
+| JwtUtil.java | Token create/validate  |
 | UserDetailsServiceImpl.java | Spring Security helper |
-| JwtAuthFilter.java | Request interceptor |
-| SecurityConfig.java | Security rules |
-| AuthService.java | Business logic |
-| AuthController.java | APIs |
-| GlobalExceptionHandler.java | Error handling |
-| InvalidCredentialsException.java | Custom exception |
+| JwtAuthFilter.java | Request interceptor    |
+| SecurityConfig.java | Security rules         |
+| AuthService.java | Business logic         |
+| AuthController.java | APIs                   |
+| GlobalExceptionHandler.java | Error handling         |
+| InvalidCredentialsException.java | Custom exception       |
 
 ## APIs Tested
 | API | Status | Result |
