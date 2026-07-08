@@ -1,6 +1,8 @@
 package com.trimzo.controller;
 
+import com.trimzo.service.ClickTrackingService;
 import com.trimzo.service.UrlService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,26 +17,49 @@ import java.net.URI;
 public class RedirectController {
 
     private final UrlService urlService;
+    private final ClickTrackingService clickTrackingService;
 
     /**
-     * Short URL click → Original URL pe redirect!
-     * GET /{shortCode}
-     *
-     * 302 = Temporary redirect
-     * Browser original URL pe chala jayega!
+     * Redirects short URL to original URL.
+     * Extracts request data BEFORE async call —
+     * because request object gets recycled after response.
      */
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(
-            @PathVariable String shortCode) {
+            @PathVariable String shortCode,
+            HttpServletRequest request) {
 
-        // Original URL nikalo
-        String originalUrl = urlService
-                .getOriginalUrl(shortCode);
+        // Get original URL
+        String originalUrl =
+                urlService.getOriginalUrl(shortCode);
 
-        // 302 Redirect response return karo
+        // Extract all data from request BEFORE async call!
+        String ipAddress = extractIp(request);
+        String userAgent = request.getHeader("User-Agent");
+        String referrer  = request.getHeader("Referer");
+
+        // Pass extracted strings to async method
+        // NOT the request object!
+        clickTrackingService.trackClick(
+                shortCode, ipAddress, userAgent, referrer);
+
+        // Redirect to original URL
         return ResponseEntity
                 .status(HttpStatus.FOUND)
                 .location(URI.create(originalUrl))
                 .build();
+    }
+
+    /**
+     * Extracts real IP address.
+     * Handles proxy and load balancer headers.
+     */
+    private String extractIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isEmpty() &&
+                !"unknown".equalsIgnoreCase(ip)) {
+            return ip.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }
